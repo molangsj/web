@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Times New Roman', Times, serif;
+            padding: 0;
+            margin: 0;
+            background: linear-gradient(to bottom, #1a0033, #3c004b, #4b0066, #330033);
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden; /* 애니메이션이 화면 밖으로 나가지 않도록 */
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            display: flex; 
+            flex-direction: column; 
+            text-align: center;
+            justify-content: center;
+            background-color: rgba(193, 186, 201, 0.8); /* 투명도 추가 */
+            color: black;
+            border-radius: 20px;
+            padding: 20px;
+            width: 400px;
+            height: 300px;
+        }
+
+        .buttons {
+            background: linear-gradient(to right, #130d30, #24143e, #170a29);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s;
+        }
+
+        .buttons:hover {
+            background: #807a9b;
+        }
+
+        /* 별 점 스타일 */
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 2s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        /* 별똥별 스타일 */
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(to bottom, white, transparent);
+            opacity: 0.8;
+            animation: fall 2s linear infinite;
+        }
+
+        /* 별 점 반짝이는 애니메이션 */
+        @keyframes blink {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* 별똥별 떨어지는 애니메이션 */
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome!</h1>
+        <form action="page2.html">
+            <label for="new-username">ID:</label>
+            <input type="text" id="new-username" name="new-username" required placeholder="아이디를 입력하세요."><br><br>
+            <label for="new-password">Password:</label>
+            <input type="password" id="new-password" name="new-password" required placeholder="비밀번호를 입력하세요."><br><br>
+            <button class="buttons" type="submit">회원가입</button>
+        </form>
+    </div>
+
+    <!-- 별 점과 별똥별 생성 -->
+    <script>
+        // 별 점 생성 함수
+        const createStar = () => {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = Math.random() * window.innerWidth + "px"; // 랜덤 x축 위치
+            star.style.top = Math.random() * window.innerHeight + "px"; // 랜덤 y축 위치
+            star.style.animationDuration = Math.random() * 2 + 1.5 + "s"; // 애니메이션 지속 시간 랜덤
+            document.body.appendChild(star);
+
+            // 오래된 별 삭제
+            setTimeout(() => {
+                star.remove();
+            }, 5000);
+        };
+
+        // 별똥별 생성 함수
+        const createShootingStar = () => {
+            const shootingStar = document.createElement("div");
+            shootingStar.className = "shooting-star";
+            shootingStar.style.left = Math.random() * window.innerWidth + "px"; // 랜덤 x축 위치
+            shootingStar.style.animationDuration = Math.random() * 1.5 + 1 + "s"; // 애니메이션 지속 시간 랜덤
+            document.body.appendChild(shootingStar);
+
+            // 오래된 별똥별 삭제
+            setTimeout(() => {
+                shootingStar.remove();
+            }, 2000);
+        };
+
+        // 일정 간격으로 별 점과 별똥별 생성
+        setInterval(createStar, 300); // 300ms마다 별 점 생성
+        setInterval(createShootingStar, 2500); // 2.5초마다 별똥별 생성
+    </script>
+</body>
+</html>
