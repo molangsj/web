@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>금융 성향 테스트</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    .hidden {
+      display: none;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .options button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #e0e0e0;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .options button:hover {
+      background-color: #90c5ff;
+      transform: scale(1.1);
+    }
+    .result-image {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="container" id="start-container">
+    <img src="신한프렌즈2.png" alt="" width="250">
+    <h1>금융 성향 테스트</h1>
+    <p>신한 프렌즈와 함께 당신의 금융 성향을 알아보세요!</p>
+    <button class="btn" onclick="startQuiz()">시작하기</button>
+  </div>
+
+  
+  <div class="container hidden" id="quiz-container">
+    <h1>금융 성향 테스트</h1>
+    <div id="quiz"></div>
+  </div>
+
+  
+  <div class="container hidden" id="result"></div>
+
+  <script>
+    function startQuiz() {
+      document.getElementById("start-container").style.display = "none";
+      document.getElementById("quiz-container").style.display = "block";
+      showQuestion();
+    }
+
+    const questions = [
+      { id: 1, text: "세일을 보면 계획에 없던 물건이라도 구매하는 경우가 있나요?", traits: { 소비형: 1, 즉흥형: 1 } },
+      { id: 2, text: "예산을 세우고 철저히 지키는 편인가요?", traits: { 절약형: 1, 계획형: 1 } },
+      { id: 3, text: "수익이 크더라도 원금 손실 가능성이 있는 투자 상품을 선택할 의향이 있나요?", traits: { 투자형: 1, 안전추구형: -1 } },
+      { id: 4, text: "기분이 좋거나 나쁠 때 소비 습관이 변하는 편인가요?", traits: { 감정형: 1, 소비형: 1 } },
+      { id: 5, text: "6개월 이상 장기적인 금융 목표를 세우고 실행하는 편인가요?", traits: { 계획형: 1, 절약형: 1 } },
+      { id: 6, text: "금융 상품을 선택하기 전에 꼼꼼하게 정보를 조사하는 편인가요?", traits: { 분석형: 1, 투자형: 1 } },
+      { id: 7, text: "투자를 시작할 때 깊이 고민하지 않고 즉흥적으로 결정하는 편인가요?", traits: { 즉흥형: 1, 투자형: 1 } },
+      { id: 8, text: "불확실한 수익보다는 안전하게 원금이 보장되는 상품을 선호하나요?", traits: { 안전추구형: 1, 절약형: 1 } },
+    ];
+
+    let currentQuestionIndex = 0;
+    const answers = {};
+    const quizContainer = document.getElementById("quiz");
+    const resultContainer = document.getElementById("result");
+
+    function showQuestion() {
+      if (currentQuestionIndex >= questions.length) {
+        calculateResult();
+        return;
+      }
+
+      const question = questions[currentQuestionIndex];
+      quizContainer.innerHTML = `
+        <div class="question">
+           <p><strong>Q${question.id}.</strong> ${question.text}</p>
+          <div class="options">
+            <span>전혀 아니다</span>
+            ${[1, 2, 3, 4, 5].map(
+              (val) =>
+                `<button onclick="selectAnswer(${question.id}, ${val})">${val}</button>`
+            ).join("")}<span>매우 그렇다</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectAnswer(questionId, value) {
+      answers[questionId] = value;
+      currentQuestionIndex++;
+      showQuestion();
+    }
+
+    function calculateResult() {
+        const scores = {};
+        questions.forEach((q) => {
+            const value = answers[q.id] || 0;
+            Object.keys(q.traits).forEach((trait) => {
+            scores[trait] = (scores[trait] || 0) + q.traits[trait] * value;
+            });
+        });
+
+        const topTraits = Object.entries(scores)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 2)
+            .map(([trait]) => trait);
+
+       
+        if (topTraits.length < 2) {
+            topTraits.push("기본형"); 
+        }
+
+  const key = `${topTraits[0]}+${topTraits[1]}`;
+      const traitCombinations = {
+        "절약형+계획형": ["The Strategic Saver", "돈은 계획적으로! 철저히 계획을 세워 저축하는 유형으로, 모든 소비와 저축에 명확한 목표를 가지고 있는 유형", "strategic_saver.png"],
+        "절약형+투자형": ["The Smart Investor",  "저축도 좋지만, 투자로 키워요! 저축을 우선시하면서도 투자로 자산을 불리려는 똑똑한 전략가 유형", "smart_investor.png"],
+        "절약형+안전추구형": ["The Cautious Saver", "위험은 NO, 안정이 최고! 안정적인 저축 방법을 선호하며, 리스크를 최소화하는 데 집중하는 유형", "cautious_saver.png"],
+        "절약형+분석형": ["The Analytical Saver", "저축도 데이터를 기반으로! 저축을 하면서도 모든 금융 결정을 분석하고 효율적인 선택을 내리는 유형","Analytical_saver.png"],
+        "소비형+즉흥형": ["The Impulsive Spender", "계획 없이, 즐겁게 소비! 계획 없이 기분에 따라 소비를 즐기는 자유로운 영혼 유형형", "impulsive_spender.png"],
+        "소비형+감정형": ["The Emotional Shopper", "기분 전환은 쇼핑으로! 감정 상태에 따라 소비를 하며, 스트레스를 쇼핑으로 해소하는 유형", "emotional_shopper.png"],
+        "소비형+투자형": ["The Optimistic Spender", "쓰고 또 벌면 되지! 소비를 즐기면서도 투자를 통해 더 큰 수익을 기대하는 긍정적인 유형","optimistic_spender.png"],
+        "소비형+계획형": ["The Balanced Spender",  "소비도 계획적으로! 소비를 즐기지만, 큰 그림을 그리며 계획적으로 사용하는 균형 잡힌 유형","balanced_spender.png"],
+        "투자형+분석형": ["The Data-Driven Investor", "투자는 철저히 분석 후에! 데이터를 바탕으로 투자 결정을 내리는 철저한 분석가","data_drivened_investor.png"],
+        "투자형+안전추구형": ["The Conservative Investor", "안정적인 투자가 좋아요! 리스크를 최소화하면서도 수익을 추구하는 신중한 투자자","conservative_investor.png"],
+        "투자형+즉흥형": ["The Bold Investor","즉흥적으로도 수익은 낼 수 있어! 큰 계획 없이 순간적인 감으로 투자를 결정하는 과감한 유형","bold_investor.png"],
+        "투자형+감정형": ["The Passionate Investor", "투자도 열정적으로!자신의 감정을 반영해 투자하며, 때로는 과감하게, 때로는 신중하게 접근하는 유형","passionate_investor.png"],
+        "계획형+안전추구형": ["The Risk-Averse Planner", "철저한 계획과 안정적인 선택! 모든 재정 활동을 안정성과 계획성으로 철저히 관리하는 유형","risk_averse_planner.png"],
+        "계획형+분석형": ["The Strategic Thinker", "분석 후 철저히 계획! 데이터를 바탕으로 장기적인 계획을 세우고 이를 충실히 실행하는 유형","strategic_thinker.png"],
+        "즉흥형+감정형": ["The Emotional Adventurer", "기분 따라, 순간 따라! 감정에 충실하면서도 즉흥적으로 소비나 금융 결정을 내리는 유형","emotional_adventurer.png"],
+        "즉흥형+분석형": ["The Curious Explorer", "즉흥적이지만 데이터는 본다! 순간적인 충동으로 행동하지만, 중요한 결정을 할 때는 분석을 놓치지 않는 유형","curious_explorer.png"]
+      };
+
+      const [title, description, image] = traitCombinations[key] || ["알 수 없음", "결과를 분석할 수 없습니다.", "default.png"];
+
+      quizContainer.style.display = "none";
+      resultContainer.innerHTML = `
+        <img src="${image}" alt="${title}" width='200' class="result-image" >
+        <h2>${title}</h2>
+        <p>${description}</p>
+      `;
+      resultContainer.style.display = "block";
+    }
+  </script>
+</body>
+</html>
